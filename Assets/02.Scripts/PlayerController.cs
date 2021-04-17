@@ -38,12 +38,7 @@ public class PlayerController : MonoBehaviour
 
     // 민감도
     [SerializeField]
-    private float lookSensitivity;
-
-    // 카메라 한계
-    [SerializeField]
-    private float cameraRotationLimit;
-    private float currentCameraRotationX = 0f;
+    private float lookSensitivity;    
 
     // 필요한 컴포넌트
     [SerializeField]
@@ -73,9 +68,11 @@ public class PlayerController : MonoBehaviour
         TryRun();
         TryCrouch();
         Move();
-        CameraRotation();
-        CharacterRotation();
-
+    }
+    
+    public Rigidbody getPlyaerRigid()
+    {
+        return this.myRigid;
     }
 
     // 앉기 시도 
@@ -239,28 +236,5 @@ public class PlayerController : MonoBehaviour
      //       theCrosshair.WalkingAnimation(isWalk);
             lastPos = transform.position;
         }
-    }
-
-    // 좌우 캐릭터 회전
-    private void CharacterRotation()
-    {
-        float _yRotation = Input.GetAxisRaw("Mouse X"); //플레이어의 y축을 회전시키면 좌우로 움직임
-        Vector3 _characterRotationY = new Vector3(0f, _yRotation, 0f) * lookSensitivity;
-        myRigid.MoveRotation(myRigid.rotation * Quaternion.Euler(_characterRotationY));
-        // 유니티에서 Rotation은 Quaternion타입. 
-        // Quaternion.Euler(_characterRotationY) 코드는 위에서 구한 백터값을 Quaterninon 타입으로 바꿔주는거임
-
-    }
-
-
-    // 상하 카메라 회전
-    private void CameraRotation()
-    {
-        float _xRotation = Input.GetAxisRaw("Mouse Y"); // 위 아래로 고개를 드는것, x를 회전시키는 이유는 카메라를 로테이션 시켜보면 x축을 움직이면 위아래로 까딱거리는것을 관찰 할 수 있다.
-        float _cameraRotationX = _xRotation * lookSensitivity;
-        currentCameraRotationX -= _cameraRotationX; // 마우스 반전과 관련이있음 += 하면 위로올리면 아래로, 아래로 올리면 위로, -= 는 그 반대로
-        currentCameraRotationX = Mathf.Clamp(currentCameraRotationX, -cameraRotationLimit, cameraRotationLimit); // Mathf.Clamp를 이용해서 고정, currentCameraRotationX 값이 -cameraRotationLimit(-45도)와 cameraRotationLimit(45도) 사이에 고정
-
-        theCamera.transform.localEulerAngles = new Vector3(currentCameraRotationX, 0f, 0f); // 카메라 각도를 변환해줌
     }
 }
